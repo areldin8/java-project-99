@@ -11,13 +11,11 @@ clean:
 build:
 	./gradlew clean build
 
-
 start-prod:
 	./gradlew bootRun --args='--spring.profiles.active=prod'
 
 install:
 	./gradlew installDist
-
 
 lint:
 	./gradlew checkstyleMain checkstyleTest
