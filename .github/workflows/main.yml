@@ -14,11 +14,14 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+      - run: make build
+      - run: make test
+
       - uses: gradle/gradle-build-action@v3
         with:
           gradle-version: 8.7
-      - run: make checkstyleMain
-      - run: make test
+          arguments: build
+
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v5.0.0
         env:

@@ -1,14 +1,26 @@
+setup:
+		./gradlew wrapper --gradle-version 8.7
+		./gradlew build
+
+start-dev:
+		./gradlew bootRun --args='--spring.profiles.active=dev'
+
+clean:
+	./gradlew clean
+
 build:
 	./gradlew clean build
+
+
+start-prod:
+	./gradlew bootRun --args='--spring.profiles.active=prod'
 
 install:
 	./gradlew installDist
 
-start:
-	./gradlew bootRun --args='--spring.profiles.active=development'
 
-start-prod:
-	./gradlew bootRun --args='--spring.profiles.active=production'
+lint:
+	./gradlew checkstyleMain checkstyleTest
 
 test:
 	./gradlew test
@@ -16,10 +28,10 @@ test:
 report:
 	./gradlew jacocoTestReport
 
-dev:
-	./gradlew run
+clean:
+	./gradlew clean
 
-checkstyleMain:
-	./gradlew checkstyleMain
+local:
+	./gradlew bootRun --args='--spring.profiles.active=file'
 
 .PHONY: build
