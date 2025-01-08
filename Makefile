@@ -11,7 +11,7 @@ report:
 	make -C app report
 
 lint:
-	make -C app lint
+	make -C app checkstyleMain
 
 backend:
 	make -C bootRun

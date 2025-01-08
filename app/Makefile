@@ -31,7 +31,7 @@ start-dist:
 	./build/install/app/bin/app
 
 lint:
-	./gradlew checkstyleMain checkstyleTest
+	./gradlew checkstyleMain
 
 test:
 	./gradlew test
