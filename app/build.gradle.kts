@@ -1,8 +1,11 @@
 plugins {
     id("java")
     java
+    checkstyle
+    application
     id("org.springframework.boot") version "3.4.1"
     id("io.spring.dependency-management") version "1.1.7"
+    id("io.freefair.lombok") version "8.6"
     jacoco
 }
 
@@ -13,6 +16,9 @@ java {
     sourceCompatibility = JavaVersion.VERSION_21
 }
 
+application {
+        mainClass = "hexlet.code.AppApplication"
+}
 repositories {
     mavenCentral()
 }
