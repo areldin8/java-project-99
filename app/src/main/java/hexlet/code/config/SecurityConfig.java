@@ -17,9 +17,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.OrRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -30,36 +27,21 @@ public class SecurityConfig {
     private final PasswordEncoder passwordEncoder;
     private final CustomUserDetailsService userDetailsService;
 
-    public static final RequestMatcher PUBLIC_URLS = new OrRequestMatcher(
-            new AntPathRequestMatcher("/api/login/**"),
-            new AntPathRequestMatcher("/api/login/"),
-            new AntPathRequestMatcher("/welcome"),
-            new AntPathRequestMatcher("/"),
-            new AntPathRequestMatcher("/exception"),
-            new AntPathRequestMatcher("/h2-console/**"),
-            new AntPathRequestMatcher("/v3/api-docs/**"),
-            new AntPathRequestMatcher("/swagger-ui.html"),
-            new AntPathRequestMatcher("/swagger-ui/**"),
-            new AntPathRequestMatcher("/index.html"),
-            new AntPathRequestMatcher("/api-docs/**"),
-            new AntPathRequestMatcher("/proxy/**"),
-            new AntPathRequestMatcher("/assets/**")
-    );
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
-                .logout(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
-                .headers(AbstractHttpConfigurer::disable)
-
 
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("api/login").permitAll()
+                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/exception").permitAll()
+                        .requestMatchers("/index.html").permitAll()
+                        .requestMatchers("/assets/**").permitAll()
+                        .requestMatchers("/swagger-ui.html","/swagger-ui/**","/api-docs/**","/proxy/**")
+                        .permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
-                        .requestMatchers(PUBLIC_URLS).permitAll()
+                        .requestMatchers(HttpMethod.GET,"/welcome").permitAll()
                         .anyRequest().authenticated())
 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

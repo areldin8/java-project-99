@@ -1,48 +1,81 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+import org.gradle.api.tasks.JavaExec
 
 plugins {
-    id("java")
-    java
-    checkstyle
-    application
-    id("org.springframework.boot") version "3.4.1"
-    id("io.spring.dependency-management") version "1.1.7"
-    id("io.freefair.lombok") version "8.6"
-    jacoco
+    id("com.github.ben-manes.versions") version "0.48.0"
+    id("application")
+    id("checkstyle")
+    id("jacoco")
+    id("org.springframework.boot") version "3.2.2"
+    id("io.spring.dependency-management") version "1.1.4"
+    id("io.sentry.jvm.gradle") version "5.2.0"
+    id("io.freefair.lombok") version "8.4"
 }
 
 group = "hexlet.code"
 version = "0.0.1-SNAPSHOT"
 
+application {
+    mainClass.set("hexlet.code.AppApplication")
+}
+
 java {
     sourceCompatibility = JavaVersion.VERSION_21
 }
 
-application {
-        mainClass = "hexlet.code.AppApplication"
+checkstyle {
+    configFile = file("config/checkstyle/checkstyle.xml")
+    toolVersion = "10.13.0"
 }
+
+configurations {
+    compileOnly {
+        extendsFrom(configurations.annotationProcessor.get())
+    }
+}
+
 repositories {
     mavenCentral()
+    maven { url = uri("https://repo.spring.io/milestone") }
+    maven { url = uri("https://repo.spring.io/snapshot") }
+}
+
+sentry {
+    // Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
+    // This enables source context, allowing you to see your source
+    // code as part of your stack traces in Sentry.
+    includeSourceContext = true
+
+    org = "nadezhda"
+    projectName = "java-spring-boot"
+    authToken = System.getenv("SENTRY_AUTH_TOKEN")
+}
+
+tasks.sentryBundleSourcesJava {
+    enabled = System.getenv("SENTRY_AUTH_TOKEN") != null
 }
 
 dependencies {
+    annotationProcessor("org.projectlombok:lombok-mapstruct-binding:0.2.0")
+    implementation("org.mapstruct:mapstruct:1.5.5.Final")
+    annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
+
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
-    implementation("org.mapstruct:mapstruct:1.5.5.Final")
-    annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
-    annotationProcessor("org.projectlombok:lombok-mapstruct-binding:0.2.0")
+
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-	compileOnly("org.projectlombok:lombok")
+
     implementation("org.openapitools:jackson-databind-nullable:0.2.6")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("com.h2database:h2")
     runtimeOnly("org.postgresql:postgresql")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-    annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
     implementation("org.instancio:instancio-junit:3.3.1")
@@ -51,30 +84,27 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.2.0")
     testImplementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.2.0")
+    implementation("io.sentry:sentry-opentelemetry-agent:8.2.0")
 }
 
-tasks.test {
+tasks.withType<Test>() {
+    finalizedBy(tasks.jacocoTestReport)
     useJUnitPlatform()
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
-
-tasks.test {
-    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
-}
-
-tasks.jacocoTestReport {
-    dependsOn(tasks.test)
-    reports {
-        xml.required = true
-        csv.required = false
-        html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
+    testLogging {
+        exceptionFormat = TestExceptionFormat.FULL
+        events = mutableSetOf(TestLogEvent.FAILED, TestLogEvent.PASSED, TestLogEvent.SKIPPED)
+        showStandardStreams = true
     }
 }
 
-jacoco {
-    toolVersion = "0.8.11"
-    reportsDirectory = layout.buildDirectory.dir("reports/jacoco")
+tasks.jacocoTestReport {
+    reports {
+        xml.required.set(true)
+    }
+}
+
+tasks.register<JavaExec>("runTaskManagerApp") {
+    classpath = sourceSets.main.get().runtimeClasspath
+    mainClass.set("hexlet.code.AppApplication")
+    args("--server.port=8080")
 }

@@ -16,7 +16,7 @@ public class JWTUtils {
     private final JwtEncoder encoder;
 
     public String generateToken(String username) {
-        Instant now = Instant.now();
+        Instant now = Instant.now();// текущее время
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)
