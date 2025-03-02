@@ -1,7 +1,7 @@
 package hexlet.code.dto.taslstatus;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 import org.openapitools.jackson.nullable.JsonNullable;
@@ -11,10 +11,9 @@ import org.openapitools.jackson.nullable.JsonNullable;
 public class TaskStatusUpdateDTO {
 
     @NotBlank
-    @Size(min = 1)
     private JsonNullable<String> name;
 
     @NotBlank
-    @Size(min = 1)
+    @Pattern(regexp = "^[a-zA-Z]+(?:_[a-zA-Z]+)*$")
     private JsonNullable<String> slug;
 }

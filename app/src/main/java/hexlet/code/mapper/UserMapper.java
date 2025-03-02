@@ -1,16 +1,16 @@
 package hexlet.code.mapper;
 
-import hexlet.code.dto.user.UserCreateDTO;
 import hexlet.code.dto.user.UserDTO;
+import hexlet.code.dto.user.UserCreateDTO;
 import hexlet.code.dto.user.UserUpdateDTO;
 import hexlet.code.model.User;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.mapstruct.ReportingPolicy;
 import org.mapstruct.BeforeMapping;
+import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,29 +24,32 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public abstract class UserMapper {
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoder encoder;
+
+    @Autowired
+    private JsonNullableMapper nullableMapper;
+
+    public abstract UserDTO map(User model);
+
+    @Mapping(target = "passwordDigest", source = "password")
+    public abstract User map(UserCreateDTO dto);
+
+    @Mapping(target = "passwordDigest", source = "password")
+    public abstract void update(UserUpdateDTO dto, @MappingTarget User model);
 
     @BeforeMapping
-    public void encryptPassword(UserCreateDTO userCreateDTO) {
-        var password = userCreateDTO.getPassword();
-        userCreateDTO.setPassword(passwordEncoder.encode(password));
+    public final void encryptPassword(UserCreateDTO data) {
+        var password = data.getPassword();
+        data.setPassword(encoder.encode(password));
     }
 
     @BeforeMapping
-    public void encryptPasswordUpdate(UserUpdateDTO userUpdateDTO, @MappingTarget User user) {
-        var password = userUpdateDTO.getPassword();
-        if (password != null && password.isPresent()) {
-            user.setPasswordDigest(passwordEncoder.encode(password.get()));
+    public final void encryptPassword(UserUpdateDTO data) {
+        if (nullableMapper.isPresent(data.getPassword())) {
+            var password = nullableMapper.unwrap(data.getPassword());
+            var passwordDigest = nullableMapper.wrap(encoder.encode(password));
+            data.setPassword(passwordDigest);
         }
     }
-
-
-    @Mapping(source = "password", target = "passwordDigest")
-    public abstract User map(UserCreateDTO userCreateDTO);
-
-    public abstract UserDTO map(User user);
-
-    @Mapping(source = "password", target = "passwordDigest")
-    public abstract void update(UserUpdateDTO userUpdateDTO, @MappingTarget User user);
 }
 

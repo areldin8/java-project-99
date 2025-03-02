@@ -1,19 +1,16 @@
 package hexlet.code.dto.labels;
 
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class LabelCreateDTO {
 
-    @NotNull
-    @Size(min = 3, max = 1000)
+    private static final int MIN = 3;
+    private static final int MAX = 1000;
+
+    @Size(min = MIN, max = MAX)
     private String name;
 }

@@ -6,8 +6,8 @@ import hexlet.code.dto.taslstatus.TaskStatusUpdateDTO;
 import hexlet.code.model.TaskStatus;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.mapstruct.ReportingPolicy;
 import org.mapstruct.MappingConstants;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.MappingTarget;
 
 
@@ -19,9 +19,12 @@ import org.mapstruct.MappingTarget;
 )
 public abstract class TaskStatusMapper {
 
-    public abstract TaskStatus map(TaskStatusCreateDTO taskStatusCreateDTO);
+    public abstract TaskStatusDTO map(TaskStatus model);
 
-    public abstract TaskStatusDTO map(TaskStatus taskStatus);
+    public abstract TaskStatus map(TaskStatusCreateDTO dto);
 
-    public abstract void update(TaskStatusUpdateDTO taskStatusUpdateDTO, @MappingTarget TaskStatus taskStatus);
+    public abstract void update(TaskStatusUpdateDTO dto, @MappingTarget TaskStatus model);
+
 }
+
+

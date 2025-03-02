@@ -1,19 +1,22 @@
 package hexlet.code.service;
 
-import hexlet.code.repository.UserRepository;
-import lombok.AllArgsConstructor;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 
+import hexlet.code.model.User;
+import hexlet.code.repository.UserRepository;
 @Service
-@AllArgsConstructor
 public class CustomUserDetailsService implements UserDetailsManager {
 
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -22,13 +25,16 @@ public class CustomUserDetailsService implements UserDetailsManager {
     }
 
     @Override
-    public void createUser(UserDetails user) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createUser'");
+    public void createUser(UserDetails userData) {
+        User user = new User();
+        user.setEmail(userData.getUsername());
+        var hashedPassword = passwordEncoder.encode(userData.getPassword());
+        user.setPasswordDigest(hashedPassword);
+        userRepository.save(user);
     }
 
     @Override
-    public void updateUser(UserDetails user) {
+    public void updateUser(UserDetails userData) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'updateUser'");
     }
@@ -51,3 +57,4 @@ public class CustomUserDetailsService implements UserDetailsManager {
         throw new UnsupportedOperationException("Unimplemented method 'userExists'");
     }
 }
+

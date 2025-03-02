@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashSet;
 import java.util.Set;
 
 
@@ -14,18 +13,21 @@ import java.util.Set;
 @Setter
 public class TaskCreateDTO {
 
-    private Integer index;
+    private int index;
 
     @JsonProperty("assignee_id")
     private long assigneeId;
 
     @NotBlank
-    private String title;
+    @JsonProperty("title")
+    private String name;
 
-    private String content;
+    @JsonProperty("content")
+    private String description;
 
     @NotNull
     private String status;
 
-    private Set<Long> taskLabelIds = new HashSet<>();
+    @JsonProperty("taskLabelIds")
+    private Set<Long> labelIds;
 }

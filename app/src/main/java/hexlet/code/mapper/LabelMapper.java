@@ -10,7 +10,6 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.MappingTarget;
 
-
 @Mapper(
         uses = {JsonNullableMapper.class, ReferenceMapper.class},
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
@@ -19,8 +18,11 @@ import org.mapstruct.MappingTarget;
 )
 public abstract class LabelMapper {
 
-    public abstract Label map(LabelCreateDTO labelCreateDTO);
-    public abstract Label map(LabelDTO labelDTO);
-    public abstract LabelDTO map(Label label);
-    public abstract void update(LabelUpdateDTO labelUpdateDTO, @MappingTarget Label label);
+    public abstract LabelDTO map(Label model);
+
+    public abstract Label map(LabelCreateDTO dto);
+
+    public abstract void update(LabelUpdateDTO dto, @MappingTarget Label model);
 }
+
+
