@@ -1,76 +1,79 @@
 package hexlet.code.components;
 
-import hexlet.code.dto.user.UserCreateDTO;
 import hexlet.code.model.Label;
 import hexlet.code.model.TaskStatus;
+import hexlet.code.model.User;
 import hexlet.code.repository.LabelRepository;
 import hexlet.code.repository.TaskStatusRepository;
-import hexlet.code.service.UserService;
-import lombok.AllArgsConstructor;
+import hexlet.code.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Component
-@AllArgsConstructor
 public class DataInitializer implements ApplicationRunner {
 
-    private final UserService userService;
-    private final TaskStatusRepository taskStatusRepository; // Используем репозиторий
-    private final LabelRepository labelRepository; // Используем репозиторий
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private TaskStatusRepository taskStatusRepository;
+
+    @Autowired
+    private LabelRepository labelRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
+    public void run(ApplicationArguments args) {
+        createAdmin();
+        createTaskStatus("Draft", "draft");
+        createTaskStatus("ToReview", "to_review");
+        createTaskStatus("ToBeFixed", "to_be_fixed");
+        createTaskStatus("ToPublish", "to_publish");
+        createTaskStatus("Published", "published");
+        createLabel("feature");
+        createLabel("bug");
+    }
 
-    public void run(ApplicationArguments args) throws Exception {
-        // Инициализация администратора
-        var admin = new UserCreateDTO();
-        admin.setEmail("hexlet@example.com");
-        admin.setPassword("qwerty");
-        admin.setFirstName("admin");
-        admin.setLastName("admin");
-        userService.create(admin);
-
-        // Инициализация статусов задач
-        Map<String, TaskStatus> taskStatusMap = new HashMap<>();
-        taskStatusMap.put("draft", new TaskStatus("Draft", "draft"));
-        taskStatusMap.put("to_review", new TaskStatus("To Review", "to_review"));
-        taskStatusMap.put("to_be_fixed", new TaskStatus("To Be Fixed", "to_be_fixed"));
-        taskStatusMap.put("to_publish", new TaskStatus("To Publish", "to_publish"));
-        taskStatusMap.put("published", new TaskStatus("Published", "published"));
-
-        // Сохраняем статусы, если они еще не существуют
-        for (Map.Entry<String, TaskStatus> entry : taskStatusMap.entrySet()) {
-            String slug = entry.getKey();
-            TaskStatus taskStatus = entry.getValue();
-            if (taskStatusRepository.findBySlug(slug).isEmpty()) {
-                taskStatusRepository.save(taskStatus);
-                System.out.println("Создан новый статус задачи: " + taskStatus.getName());
-            } else {
-                System.out.println("Статус задачи с слагом " + slug + " уже существует.");
-            }
+    private void createAdmin() {
+        var email = "hexlet@example.com";
+        if (userRepository.findByEmail(email).isPresent()) {
+            return;
         }
 
-        // Инициализация меток
-        Map<String, Label> labelMap = new HashMap<>();
-        labelMap.put("feature", new Label("feature"));
-        labelMap.put("bug", new Label("bug"));
+        var user = new User();
+        user.setEmail(email);
+        user.setFirstName("admin");
+        user.setLastName("admin");
+        user.setRole("ADMIN");
+        var passwordDigest = passwordEncoder.encode("qwerty");
+        user.setPasswordDigest(passwordDigest);
 
-        // Сохраняем метки, если они еще не существуют
-        for (Map.Entry<String, Label> entry : labelMap.entrySet()) {
-            String name = entry.getKey();
-            Label label = entry.getValue();
-            if (labelRepository.findByName(name).isEmpty()) {
-                labelRepository.save(label);
-                System.out.println("Создана новая метка: " + label.getName());
-            } else {
-                System.out.println("Метка с названием " + label.getName() + " уже существует.");
-            }
+        userRepository.save(user);
+    }
+
+    private void createTaskStatus(String name, String slug) {
+        if (taskStatusRepository.findBySlug(slug).isPresent()) {
+            return;
         }
+        var taskStatus = new TaskStatus();
+        taskStatus.setName(name);
+        taskStatus.setSlug(slug);
+        taskStatusRepository.save(taskStatus);
+    }
+
+    private void createLabel(String name) {
+        if (labelRepository.findByName(name).isPresent()) {
+            return;
+        }
+        var label = new Label();
+        label.setName(name);
+        labelRepository.save(label);
     }
 }
-
 
 
