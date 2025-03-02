@@ -2,27 +2,14 @@ spring:
   application:
     name: app
   jpa:
+    open-in-view: false
     generate-ddl: true
     show-sql: true
     hibernate:
-      ddl-auto: create
-
-output:
-  ansi:
-    enabled: always
-instancio:
-  bean:
-    validation:
-      enabled: true
-sql:
-  init:
-    mode: always
-profiles:
-  default: development
-
-logging:
-  level:
-    root: INFO
+      ddl-auto: update
+  output:
+    ansi:
+      enabled: always
 
 rsa:
   private-key: classpath:certs/private_key.pem
