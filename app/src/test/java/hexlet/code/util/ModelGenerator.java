@@ -17,7 +17,6 @@ import lombok.Getter;
 
 import java.util.HashSet;
 
-
 @Getter
 @Component
 public class ModelGenerator {
@@ -71,4 +70,3 @@ public class ModelGenerator {
                 .toModel();
     }
 }
-

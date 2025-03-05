@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import hexlet.code.mapper.TaskMapper;
+
 import hexlet.code.model.Task;
 import hexlet.code.model.TaskStatus;
 import hexlet.code.model.User;
@@ -21,14 +22,14 @@ import hexlet.code.util.ModelGenerator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.instancio.Instancio;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors
-        .JwtRequestPostProcessor;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.HashMap;
@@ -37,7 +38,7 @@ import java.util.Set;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class TaskControllerTest {
+public final class TaskControllerTest {
 
     private static final String URL_PATH = "/api/tasks";
 
@@ -66,7 +67,7 @@ public class TaskControllerTest {
     private TaskMapper taskMapper;
 
     private User testUser;
-    private JwtRequestPostProcessor userToken;
+    private SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor userToken;
 
     private TaskStatus testTaskStatus;
 

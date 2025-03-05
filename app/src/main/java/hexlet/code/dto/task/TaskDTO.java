@@ -11,7 +11,6 @@ import java.util.Set;
 @Getter
 @Setter
 public class TaskDTO {
-
     private long id;
     private int index;
 
@@ -31,5 +30,4 @@ public class TaskDTO {
 
     @JsonProperty("taskLabelIds")
     private Set<Long> labelIds;
-
 }

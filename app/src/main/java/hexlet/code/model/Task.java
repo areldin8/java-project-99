@@ -22,6 +22,7 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.util.Set;
 
+
 @Entity
 @Table(name = "tasks")
 @EntityListeners(AuditingEntityListener.class)
@@ -52,6 +53,4 @@ public class Task implements BaseEntity {
 
     @CreatedDate
     private LocalDate createdAt;
-
 }
-

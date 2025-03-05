@@ -8,7 +8,7 @@ import lombok.Setter;
 public class TaskFilterDTO {
 
     private String titleCont;
-    private String assigneeId;
+    private Long assigneeId;
     private String status;
     private Long labelId;
 }
