@@ -7,7 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LabelCreateDTO {
-
     private static final int MIN = 3;
     private static final int MAX = 1000;
 

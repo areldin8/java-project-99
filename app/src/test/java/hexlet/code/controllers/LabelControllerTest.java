@@ -12,21 +12,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import hexlet.code.model.Label;
 import hexlet.code.model.User;
 import hexlet.code.repository.LabelRepository;
+
 import hexlet.code.repository.UserRepository;
 import hexlet.code.util.ModelGenerator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.instancio.Instancio;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors
-        .JwtRequestPostProcessor;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
-
 import java.util.HashMap;
 import java.util.List;
 
@@ -52,19 +53,26 @@ public class LabelControllerTest {
     private ObjectMapper om;
 
     private User testUser;
-    private JwtRequestPostProcessor userToken;
+    private SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor userToken;
 
     private Label testLabel;
 
     @BeforeEach
     public void setUp() {
-        testUser = Instancio.of(modelGenerator.getUserModel()).create();
+        testUser  = Instancio.of(modelGenerator.getUserModel()).create();
         userRepository.save(testUser);
-        userToken = jwt().jwt(builder -> builder.subject(testUser.getEmail()));
+        userToken = jwt().jwt(builder -> builder.subject(testUser .getEmail()));
 
         testLabel = Instancio.of(modelGenerator.getLabelModel()).create();
         labelRepository.save(testLabel);
     }
+
+    @AfterEach
+    public void clean() {
+        labelRepository.deleteAll();
+        userRepository.deleteAll();
+    }
+
 
     @Test
     public void testIndex() throws Exception {

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class LabelService {
+public final class LabelService {
 
     @Autowired
     private LabelRepository labelRepository;

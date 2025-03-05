@@ -17,7 +17,6 @@ import org.mapstruct.MappingTarget;
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 public abstract class LabelMapper {
-
     public abstract LabelDTO map(Label model);
 
     public abstract Label map(LabelCreateDTO dto);
