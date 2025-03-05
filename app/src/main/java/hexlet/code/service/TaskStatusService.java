@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class TaskStatusService {
+public final class TaskStatusService {
 
     @Autowired
     private TaskStatusRepository taskStatusRepository;

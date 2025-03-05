@@ -7,8 +7,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
 @Setter
+@Getter
 public class UserCreateDTO {
 
     private static final int PASS_MIN = 3;
@@ -26,5 +26,4 @@ public class UserCreateDTO {
     @NotNull
     @Size(min = PASS_MIN, max = PASS_MAX)
     private String password;
-
 }

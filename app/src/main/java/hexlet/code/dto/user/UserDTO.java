@@ -6,10 +6,9 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Getter
 @Setter
+@Getter
 public class UserDTO {
-
     private long id;
     private String email;
     private String firstName;

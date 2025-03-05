@@ -12,7 +12,6 @@ import java.util.Set;
 @Getter
 @Setter
 public class TaskUpdateDTO {
-
     private JsonNullable<Integer> index;
 
     @JsonProperty("assignee_id")

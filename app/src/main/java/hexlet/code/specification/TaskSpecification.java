@@ -1,6 +1,5 @@
 package hexlet.code.specification;
 
-
 import hexlet.code.dto.task.TaskFilterDTO;
 import hexlet.code.model.Task;
 
@@ -8,7 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TaskSpecification {
+public final class TaskSpecification {
 
     public Specification<Task> build(TaskFilterDTO params) {
         return withTitleCont(params.getTitleCont())
@@ -23,7 +22,7 @@ public class TaskSpecification {
                 : cb.like(root.get("name"), "%" + titleCont + "%");
     }
 
-    private Specification<Task> withAssigneeId(String assigneeId) {
+    private Specification<Task> withAssigneeId(Long assigneeId) {
         return (root, query, cb) -> assigneeId == null
                 ? cb.conjunction()
                 : cb.equal(root.get("assignee").get("id"), assigneeId);
@@ -41,5 +40,4 @@ public class TaskSpecification {
                 : cb.equal(root.get("labels").get("id"), labelId);
     }
 }
-
 

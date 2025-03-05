@@ -15,5 +15,6 @@ public class TaskStatusCreateDTO {
     @NotBlank
     @Pattern(regexp = "^[a-zA-Z]+(?:_[a-zA-Z]+)*$")
     private String slug;
-
 }
+
+

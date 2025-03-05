@@ -7,8 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.openapitools.jackson.nullable.JsonNullable;
 
-@Getter
 @Setter
+@Getter
 public class UserUpdateDTO {
 
     private static final int PASS_MIN = 3;
