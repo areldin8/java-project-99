@@ -12,8 +12,9 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+
 @Component
-public class DataInitializer implements ApplicationRunner {
+public final class DataInitializer implements ApplicationRunner {
 
     @Autowired
     private UserRepository userRepository;
@@ -47,8 +48,8 @@ public class DataInitializer implements ApplicationRunner {
 
         var user = new User();
         user.setEmail(email);
-        user.setFirstName("admin");
-        user.setLastName("admin");
+        user.setFirstName("Tota");
+        user.setLastName("Admin");
         user.setRole("ADMIN");
         var passwordDigest = passwordEncoder.encode("qwerty");
         user.setPasswordDigest(passwordDigest);
