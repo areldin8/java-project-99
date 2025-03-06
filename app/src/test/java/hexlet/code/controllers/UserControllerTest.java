@@ -12,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 import hexlet.code.util.ModelGenerator;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import hexlet.code.model.User;
@@ -31,6 +32,7 @@ import java.util.List;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Slf4j
 public final class UserControllerTest {
 
     private static final String URL_PATH = "/api/users";
