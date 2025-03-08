@@ -1,19 +1,20 @@
 package hexlet.code.mapper;
 
-import hexlet.code.dto.user.UserDTO;
 import hexlet.code.dto.user.UserCreateDTO;
 import hexlet.code.dto.user.UserUpdateDTO;
+import hexlet.code.dto.user.UserDTO;
 import hexlet.code.model.User;
-
 import org.mapstruct.BeforeMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.ReportingPolicy;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.ReportingPolicy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import java.util.List;
+
 
 @Mapper(
         uses = {JsonNullableMapper.class, ReferenceMapper.class},
@@ -26,30 +27,24 @@ public abstract class UserMapper {
     @Autowired
     private PasswordEncoder encoder;
 
-    @Autowired
-    private JsonNullableMapper nullableMapper;
+    public abstract List<UserDTO> map(List<User> users);
 
+    @Mapping(target = "passwordDigest", source = "password")
+    public abstract User map(UserCreateDTO model);
+
+    public abstract User map(UserUpdateDTO model);
+
+    @Mapping(target = "password", ignore = true)
     public abstract UserDTO map(User model);
 
-    @Mapping(target = "passwordDigest", source = "password")
-    public abstract User map(UserCreateDTO dto);
+    public abstract User map(UserDTO model);
 
-    @Mapping(target = "passwordDigest", source = "password")
-    public abstract void update(UserUpdateDTO dto, @MappingTarget User model);
+    public abstract void update(UserUpdateDTO update, @MappingTarget User destination);
 
     @BeforeMapping
-    public final void encryptPassword(UserCreateDTO data) {
+    public void encryptPassword(UserCreateDTO data) {
         var password = data.getPassword();
         data.setPassword(encoder.encode(password));
-    }
-
-    @BeforeMapping
-    public final void encryptPassword(UserUpdateDTO data) {
-        if (nullableMapper.isPresent(data.getPassword())) {
-            var password = nullableMapper.unwrap(data.getPassword());
-            var passwordDigest = nullableMapper.wrap(encoder.encode(password));
-            data.setPassword(passwordDigest);
-        }
     }
 }
 

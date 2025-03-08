@@ -11,19 +11,15 @@ import lombok.Setter;
 @Getter
 public class UserCreateDTO {
 
-    private static final int PASS_MIN = 3;
-    private static final int PASS_MAX = 100;
-
-    @Email(regexp = "^\\w+(\\.\\w+)*@(\\w+\\.){1}\\w{2,4}$")
-    private String email;
-
-    @NotBlank
     private String firstName;
-
-    @NotBlank
     private String lastName;
 
+    @NotBlank
+    @Email
+    private String email;
+
     @NotNull
-    @Size(min = PASS_MIN, max = PASS_MAX)
+    @Size(min = 3)
     private String password;
+
 }

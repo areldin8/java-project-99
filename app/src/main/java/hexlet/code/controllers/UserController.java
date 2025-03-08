@@ -4,9 +4,8 @@ import hexlet.code.dto.user.UserCreateDTO;
 import hexlet.code.dto.user.UserDTO;
 import hexlet.code.dto.user.UserUpdateDTO;
 import hexlet.code.service.UserService;
-import hexlet.code.utils.UserUtils;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,51 +22,47 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/users")
 public class UserController {
 
-    private static final String AUTHORITY = """
-            @userUtils.getCurrentUser().getId() == #id
-            or @userUtils.getCurrentUser().getRole().equals('ADMIN')""";
+    private UserService service;
 
-    @Autowired
-    private UserService userService;
+    private static final String ONLY_OWNER = """
+                @userRepository.findById(#id).get().getEmail() == authentication.getName()
+            """;
 
-    @Autowired
-    private UserUtils userUtils;
-
-    @GetMapping(path = "")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<UserDTO>> index() {
-        var users = userService.findAll();
+    @GetMapping()
+    public ResponseEntity<List<UserDTO>> getAll() {
+        var users = service.getAll();
         return ResponseEntity.ok()
                 .header("X-Total-Count", String.valueOf(users.size()))
                 .body(users);
     }
 
-    @GetMapping(path = "/{id}")
+    @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UserDTO show(@PathVariable long id) {
-        return userService.findById(id);
+    public UserDTO getById(@PathVariable Long id) {
+        return service.getById(id);
     }
 
-    @PostMapping(path = "")
+    @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDTO create(@RequestBody @Valid UserCreateDTO userData) {
-        return userService.create(userData);
+    public UserDTO create(@Valid @RequestBody UserCreateDTO userData) {
+        return service.create(userData);
     }
 
-    @PutMapping(path = "/{id}")
+    @PutMapping("/{id}")
+    @PreAuthorize(ONLY_OWNER)
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize(AUTHORITY)
-    public UserDTO update(@PathVariable long id, @RequestBody @Valid UserUpdateDTO userData) {
-        return userService.update(id, userData);
+    public UserDTO update(@RequestBody @Valid UserUpdateDTO userData, @PathVariable Long id) {
+        return service.update(userData, id);
     }
 
-    @DeleteMapping(path = "/{id}")
+    @DeleteMapping("/{id}")
+    @PreAuthorize(ONLY_OWNER)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize(AUTHORITY)
-    public void delete(@PathVariable long id) {
-        userService.delete(id);
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
     }
 }
