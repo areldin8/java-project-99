@@ -8,14 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import hexlet.code.model.BaseEntity;
 import jakarta.persistence.EntityManager;
 
-@Mapper(
-        componentModel = MappingConstants.ComponentModel.SPRING
-)
+
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public abstract class ReferenceMapper {
+
     @Autowired
     private EntityManager entityManager;
 
-    public final <T extends BaseEntity> T toEntity(Long id, @TargetType Class<T> entityClass) {
+    public <T extends BaseEntity> T toEntity(Long id, @TargetType Class<T> entityClass) {
         return id != null ? entityManager.find(entityClass, id) : null;
     }
 }

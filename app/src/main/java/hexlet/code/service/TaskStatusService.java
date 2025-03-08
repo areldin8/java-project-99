@@ -5,51 +5,49 @@ import hexlet.code.dto.taslstatus.TaskStatusDTO;
 import hexlet.code.dto.taslstatus.TaskStatusUpdateDTO;
 import hexlet.code.exception.ResourceNotFoundException;
 import hexlet.code.mapper.TaskStatusMapper;
-import hexlet.code.model.TaskStatus;
 import hexlet.code.repository.TaskStatusRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public final class TaskStatusService {
+@AllArgsConstructor
+public class TaskStatusService {
 
     @Autowired
-    private TaskStatusRepository taskStatusRepository;
+    private TaskStatusRepository repository;
 
     @Autowired
-    private TaskStatusMapper mapper;
+    private TaskStatusMapper statusMapper;
 
-    public List<TaskStatusDTO> findAll() {
-        return taskStatusRepository.findAll().stream()
-                .map(mapper::map)
-                .toList();
+    public List<TaskStatusDTO> getAll() {
+        var statuses = repository.findAll();
+        return statusMapper.map(statuses);
     }
 
-    public TaskStatusDTO findById(long id) {
-        TaskStatus taskStatus = taskStatusRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Task status id " + id + " not found"));
-        return mapper.map(taskStatus);
+    public TaskStatusDTO getById(Long id) {
+        var status = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("TaskStatus with id " + id + " not found"));
+        return statusMapper.map(status);
     }
 
-    public TaskStatusDTO create(TaskStatusCreateDTO taskStatusData) {
-        TaskStatus taskStatus = mapper.map(taskStatusData);
-        taskStatusRepository.save(taskStatus);
-        return mapper.map(taskStatus);
+    public TaskStatusDTO create(TaskStatusCreateDTO statusData) {
+        var status = statusMapper.map(statusData);
+        repository.save(status);
+        return statusMapper.map(status);
     }
 
-    public TaskStatusDTO update(long id, TaskStatusUpdateDTO taskStatusData) {
-        TaskStatus taskStatus = taskStatusRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Task status id " + id + " not found"));
-        mapper.update(taskStatusData, taskStatus);
-        taskStatusRepository.save(taskStatus);
-        return mapper.map(taskStatus);
+    public TaskStatusDTO update(TaskStatusUpdateDTO statusData, Long id) {
+        var status = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("TaskStatus with id " + id + " not found"));
+        statusMapper.update(statusData, status);
+        repository.save(status);
+        return statusMapper.map(status);
     }
 
-    public void delete(long id) {
-        TaskStatus taskStatus = taskStatusRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Task status id " + id + " not found"));
-        taskStatusRepository.delete(taskStatus);
+    public void delete(Long id) {
+        repository.deleteById(id);
     }
 }
