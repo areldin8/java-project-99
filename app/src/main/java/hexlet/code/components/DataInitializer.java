@@ -6,74 +6,70 @@ import hexlet.code.model.User;
 import hexlet.code.repository.LabelRepository;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import hexlet.code.service.CustomUserDetailsService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 
 @Component
-public final class DataInitializer implements ApplicationRunner {
+@RequiredArgsConstructor
+public class DataInitializer implements ApplicationRunner {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final CustomUserDetailsService userService;
 
-    @Autowired
-    private TaskStatusRepository taskStatusRepository;
+    private final TaskStatusRepository statusRepository;
 
-    @Autowired
-    private LabelRepository labelRepository;
+    private final LabelRepository labelRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
 
     @Override
-    public void run(ApplicationArguments args) {
-        createAdmin();
-        createTaskStatus("Draft", "draft");
-        createTaskStatus("ToReview", "to_review");
-        createTaskStatus("ToBeFixed", "to_be_fixed");
-        createTaskStatus("ToPublish", "to_publish");
-        createTaskStatus("Published", "published");
-        createLabel("feature");
-        createLabel("bug");
-    }
-
-    private void createAdmin() {
-        var email = "hexlet@example.com";
-        if (userRepository.findByEmail(email).isPresent()) {
-            return;
+    public void run(ApplicationArguments args) throws Exception {
+        if (userRepository.findByEmail("hexlet@example.com").isEmpty()) {
+            var email = "hexlet@example.com";
+            var userData = new User();
+            userData.setEmail(email);
+            userData.setFirstName("Admin");
+            userData.setLastName("Admin");
+            userData.setPasswordDigest("qwerty");
+            userService.createUser(userData);
         }
 
-        var user = new User();
-        user.setEmail(email);
-        user.setFirstName("Tota");
-        user.setLastName("Admin");
-        user.setRole("ADMIN");
-        var passwordDigest = passwordEncoder.encode("qwerty");
-        user.setPasswordDigest(passwordDigest);
 
-        userRepository.save(user);
-    }
+        var draftStatus = new TaskStatus();
+        draftStatus.setName("Draft");
+        draftStatus.setSlug("draft");
+        statusRepository.save(draftStatus);
 
-    private void createTaskStatus(String name, String slug) {
-        if (taskStatusRepository.findBySlug(slug).isPresent()) {
-            return;
-        }
-        var taskStatus = new TaskStatus();
-        taskStatus.setName(name);
-        taskStatus.setSlug(slug);
-        taskStatusRepository.save(taskStatus);
-    }
+        var toReviewStatus = new TaskStatus();
+        toReviewStatus.setName("Review");
+        toReviewStatus.setSlug("to_review");
+        statusRepository.save(toReviewStatus);
 
-    private void createLabel(String name) {
-        if (labelRepository.findByName(name).isPresent()) {
-            return;
-        }
-        var label = new Label();
-        label.setName(name);
-        labelRepository.save(label);
+        var toBeFixedStatus = new TaskStatus();
+        toBeFixedStatus.setName("ToBeFixed");
+        toBeFixedStatus.setSlug("to_be_fixed");
+        statusRepository.save(toBeFixedStatus);
+
+        var toPublishStatus = new TaskStatus();
+        toPublishStatus.setName("ToPublish");
+        toPublishStatus.setSlug("to_publish");
+        statusRepository.save(toPublishStatus);
+
+        var publishedStatus = new TaskStatus();
+        publishedStatus.setName("Published");
+        publishedStatus.setSlug("published");
+        statusRepository.save(publishedStatus);
+
+        var featureLabel = new Label();
+        featureLabel.setName("feature");
+        labelRepository.save(featureLabel);
+
+        var bugLabel = new Label();
+        bugLabel.setName("bug");
+        labelRepository.save(bugLabel);
     }
 }
 
