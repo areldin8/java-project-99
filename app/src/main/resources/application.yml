@@ -12,7 +12,7 @@ spring:
       enabled: always
 
 rsa:
-  private-key: classpath:certs/private.pem
+  private-key: classpath:certs/private_key.pem
   public-key: classpath:certs/public.pem
 
 springdoc:
