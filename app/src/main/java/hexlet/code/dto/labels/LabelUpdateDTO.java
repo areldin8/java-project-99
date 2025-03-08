@@ -1,17 +1,21 @@
 package hexlet.code.dto.labels;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.openapitools.jackson.nullable.JsonNullable;
 
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class LabelUpdateDTO {
-    private static final int MIN = 3;
-    private static final int MAX = 1000;
 
-    @Size(min = MIN, max = MAX)
+    @NotBlank
+    @Size(min = 3, max = 1000)
     private JsonNullable<String> name;
 }
