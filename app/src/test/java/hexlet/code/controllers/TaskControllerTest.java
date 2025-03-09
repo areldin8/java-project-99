@@ -77,8 +77,6 @@ public class TaskControllerTest {
 
     private Task testTask;
     private TaskStatus testTaskStatus;
-    private User testUser;
-    private Label testLabel;
 
     private SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor token;
 
@@ -93,8 +91,8 @@ public class TaskControllerTest {
 
         testTask = Instancio.of(modelGenerator.getTaskModel()).create();
         testTaskStatus = Instancio.of(modelGenerator.getTaskStatusModel()).create();
-        testUser = Instancio.of(modelGenerator.getUserModel()).create();
-        testLabel = Instancio.of(modelGenerator.getLabelModel()).create();
+        User testUser = Instancio.of(modelGenerator.getUserModel()).create();
+        Label testLabel = Instancio.of(modelGenerator.getLabelModel()).create();
 
         taskStatusRepository.save(testTaskStatus);
         userRepository.save(testUser);
@@ -192,7 +190,7 @@ public class TaskControllerTest {
     }
 
     @Test
-    public void testDestroy() throws Exception {
+    public void testDelete() throws Exception {
         var request = delete("/api/tasks/" + testTask.getId()).with(jwt());
         mockMvc.perform(request)
                 .andExpect(status().isNoContent());

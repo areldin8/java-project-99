@@ -105,9 +105,9 @@ public class UserControllerTest {
 
         var body = response.getContentAsString();
 
-        List<UserDTO> userDTOS = objectMapper.readValue(body, new TypeReference<>() { });
+        List<UserDTO> userDTO = objectMapper.readValue(body, new TypeReference<>() { });
 
-        var actual = userDTOS.stream().map(userMapper::map).toList();
+        var actual = userDTO.stream().map(userMapper::map).toList();
         var expected = userRepository.findAll();
         Assertions.assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
     }
@@ -133,8 +133,8 @@ public class UserControllerTest {
         var createDto = new UserCreateDTO();
         createDto.setEmail("test@mail.ru");
         createDto.setPassword("qwerty");
-        createDto.setFirstName("Denis");
-        createDto.setLastName("unknown");
+        createDto.setFirstName("John");
+        createDto.setLastName("Smith");
 
         var request = post("/api/users")
                 .with(token)
@@ -158,7 +158,7 @@ public class UserControllerTest {
         var originalLastName = originalUser.getLastName();
         var originalEmail = originalUser.getEmail();
         var data = new HashMap<>();
-        data.put("firstName", "Denis");
+        data.put("firstName", "John");
 
         var request = put("/api/users/" + testUser.getId())
                 .with(currentToken)
@@ -170,10 +170,16 @@ public class UserControllerTest {
 
         var user = userRepository.findById(testUser.getId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found!"));
-        assertThat(user.getFirstName()).isEqualTo(("Denis"));
+        assertThat(user.getFirstName()).isEqualTo(("John"));
         assertThat(user.getFirstName()).isNotEqualTo(originalFirstName);
         assertThat(user.getLastName()).isEqualTo(originalLastName);
         assertThat(user.getEmail()).isEqualTo(originalEmail);
+    }
+
+    @Test
+    public void testIndexUnauthorized() throws Exception {
+        mockMvc.perform(get("/api/users"))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test

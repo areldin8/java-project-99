@@ -16,7 +16,7 @@ import java.time.LocalDate;
 public class LabelDTO {
     private Long id;
 
-    @Size(min = 1, max = 255)
+    @Size(min = 1, max = 1000)
     private String name;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

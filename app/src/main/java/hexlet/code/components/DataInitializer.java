@@ -37,7 +37,6 @@ public class DataInitializer implements ApplicationRunner {
             userService.createUser(userData);
         }
 
-
         var draftStatus = new TaskStatus();
         draftStatus.setName("Draft");
         draftStatus.setSlug("draft");

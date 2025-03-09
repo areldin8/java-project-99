@@ -28,7 +28,7 @@ public class UserController {
 
     private UserService service;
 
-    private static final String ONLY_OWNER = """
+    private static final String ADMIN = """
                 @userRepository.findById(#id).get().getEmail() == authentication.getName()
             """;
 
@@ -53,14 +53,14 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize(ONLY_OWNER)
+    @PreAuthorize(ADMIN)
     @ResponseStatus(HttpStatus.OK)
     public UserDTO update(@RequestBody @Valid UserUpdateDTO userData, @PathVariable Long id) {
         return service.update(userData, id);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize(ONLY_OWNER)
+    @PreAuthorize(ADMIN)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
         service.delete(id);
