@@ -1,19 +1,22 @@
 build:
-	make -C app build
+	./gradlew clean build
 
-clean:
-	make -C app clean
+install:
+	./gradlew installDist
 
 test:
-	make -C app test
-
-report:
-	make -C app report
+	./gradlew test
 
 lint:
-	make -C app checkstyleMain
+	./gradlew checkstyleMain
 
-backend:
-	make -C bootRun
+report:
+	./gradlew jacocoTestReport
+
+dev:
+	./gradlew bootRun --args='--spring.profiles.active=dev'
+
+prod:
+	./gradlew bootRun --args='--spring.profiles.active=prod'
 
 .PHONY: build
