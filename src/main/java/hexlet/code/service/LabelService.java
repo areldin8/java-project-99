@@ -47,6 +47,9 @@ public class LabelService {
     }
 
     public void delete(Long id) {
+        if (!repository.existsById(id)) {
+            throw new ResourceNotFoundException("Label with id" + id + "not found");
+        }
         repository.deleteById(id);
     }
 }

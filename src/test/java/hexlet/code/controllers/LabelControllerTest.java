@@ -1,6 +1,5 @@
 package hexlet.code.controllers;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hexlet.code.dto.labels.LabelCreateDTO;
 import hexlet.code.dto.labels.LabelUpdateDTO;
@@ -12,7 +11,6 @@ import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.repository.UserRepository;
 import hexlet.code.util.ModelGenerator;
 import org.instancio.Instancio;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openapitools.jackson.nullable.JsonNullable;
@@ -24,6 +22,11 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -34,12 +37,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 class LabelControllerTest {
+
     @Autowired
     private WebApplicationContext wac;
 
@@ -73,6 +76,7 @@ class LabelControllerTest {
 
     @BeforeEach
     public void setUp() {
+        cleanDatabase();
 
         mockMvc = MockMvcBuilders.webAppContextSetup(wac)
                 .defaultResponseCharacterEncoding(StandardCharsets.UTF_8)
@@ -87,8 +91,7 @@ class LabelControllerTest {
 
     }
 
-    @AfterEach
-    public void clean() {
+    private void cleanDatabase() {
         taskRepository.deleteAll();
         userRepository.deleteAll();
         labelRepository.deleteAll();
@@ -114,10 +117,9 @@ class LabelControllerTest {
 
         mockMvc.perform(request).andExpect(status().isCreated());
 
-        var label = labelRepository.findByName(data.getName())
-                .orElseThrow(() -> new IllegalArgumentException("Label not found!"));
+        var label = labelRepository.findByName(data.getName()).orElse(null);
 
-        assertNotNull(label);
+        assertNotNull(label, "Label should not be null after creation");
         assertThat(label.getName()).isEqualTo(data.getName());
     }
 
@@ -155,9 +157,11 @@ class LabelControllerTest {
 
     @Test
     public void testDelete() throws Exception {
+        assertTrue(labelRepository.existsById(testLabel.getId()), "Label should exist before deletion");
         mockMvc.perform(delete("/api/labels/" + testLabel.getId())
                         .with(token))
                 .andExpect(status().isNoContent());
+        assertFalse(labelRepository.existsById(testLabel.getId()), "Label should be deleted after deletion request");
     }
 }
 

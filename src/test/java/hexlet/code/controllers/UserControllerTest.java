@@ -13,7 +13,7 @@ import hexlet.code.repository.UserRepository;
 import hexlet.code.util.ModelGenerator;
 import org.assertj.core.api.Assertions;
 import org.instancio.Instancio;
-import org.junit.jupiter.api.AfterEach;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +73,9 @@ public class UserControllerTest {
     private User testUser;
 
     @BeforeEach
+
     public void setUp() {
+        cleanDatabase();
 
         mockMvc = MockMvcBuilders.webAppContextSetup(wac)
                 .defaultResponseCharacterEncoding(StandardCharsets.UTF_8)
@@ -87,8 +89,7 @@ public class UserControllerTest {
         userRepository.save(testUser);
     }
 
-    @AfterEach
-    public void clean() {
+    public void cleanDatabase() {
         taskRepository.deleteAll();
         userRepository.deleteAll();
         labelRepository.deleteAll();

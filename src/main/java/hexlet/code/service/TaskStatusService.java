@@ -48,6 +48,9 @@ public class TaskStatusService {
     }
 
     public void delete(Long id) {
+        if (!repository.existsById(id)) {
+            throw new ResourceNotFoundException("TaskStatus with id" + id + "not found");
+        }
         repository.deleteById(id);
     }
 }

@@ -17,7 +17,6 @@ import hexlet.code.repository.UserRepository;
 import hexlet.code.util.ModelGenerator;
 import org.assertj.core.api.Assertions;
 import org.instancio.Instancio;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openapitools.jackson.nullable.JsonNullable;
@@ -82,6 +81,8 @@ public class TaskControllerTest {
 
     @BeforeEach
     public void setUp() {
+        cleanDatabase();
+
         mockMvc = MockMvcBuilders.webAppContextSetup(wac)
                 .defaultResponseCharacterEncoding(StandardCharsets.UTF_8)
                 .apply(springSecurity())
@@ -105,8 +106,7 @@ public class TaskControllerTest {
         taskRepository.save(testTask);
     }
 
-    @AfterEach
-    public void clean() {
+    public void cleanDatabase() {
         taskRepository.deleteAll();
         userRepository.deleteAll();
         labelRepository.deleteAll();
